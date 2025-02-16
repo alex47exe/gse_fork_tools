@@ -1,4 +1,11 @@
-steam[client] @ git+https://github.com/detiam/steam_websocket@b8239912e6a190f490aede529c08b5049096bdc8
+steam[client] @ git+https://github.com/alex47exe/steam_fork.git
 pyinstaller
 requests
 certifi
+configobj
+beautifulsoup4
+
+
+
+
+
