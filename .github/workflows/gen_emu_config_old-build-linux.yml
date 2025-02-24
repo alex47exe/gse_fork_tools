@@ -8,8 +8,16 @@ on:
       - completed
   workflow_call:
     # needed since it allows this to become a reusable workflow
+    workflows: ["gen_emu_config_old-gse_release-linux"]
+    branches: [main]
+    types:
+      - completed
   workflow_dispatch:
     # allows manual trigger
+    workflows: ["gen_emu_config_old-gse_release-linux"]
+    branches: [main]
+    types:
+      - completed
 
 permissions:
   contents: "write"
