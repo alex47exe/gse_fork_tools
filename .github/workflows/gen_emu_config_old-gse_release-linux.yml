@@ -21,14 +21,14 @@ jobs:
         uses: robinraju/release-downloader@v1.6
         with:
           repository: 'alex47exe/gse_fork'
-          file-name: 'emu-linux-release.tar.bz2'
+          fileName: 'emu-linux-release.tar.bz2'
           latest: true
 
       - name: Download emu-linux-debug.tar.bz2
         uses: robinraju/release-downloader@v1.6
         with:
           repository: 'alex47exe/gse_fork'
-          file-name: 'emu-linux-debug.tar.bz2'
+          fileName: 'emu-linux-debug.tar.bz2'
           latest: true
 
       - name: Extract emu-linux-release.tar.bz2

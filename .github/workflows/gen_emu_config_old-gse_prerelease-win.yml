@@ -21,14 +21,14 @@ jobs:
         uses: robinraju/release-downloader@v1.6
         with:
           repository: 'alex47exe/gse_fork'
-          file-name: 'emu-win-release.7z'
+          fileName: 'emu-win-release.7z'
           latest: true
 
       - name: Download emu-win-debug.7z
         uses: robinraju/release-downloader@v1.6
         with:
           repository: 'alex47exe/gse_fork'
-          file-name: 'emu-win-debug.7z'
+          fileName: 'emu-win-debug.7z'
           latest: true
 
       - name: Install 7z

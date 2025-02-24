@@ -10,13 +10,6 @@ set "ICON_FILE=%ROOT%\icon\Froyoshark-Enkel-Steam.ico"
 
 set /a "LAST_ERR_CODE=0"
 
-set "SIGNER_TOOL=..\..\third-party\build\win\cert\sign_helper.bat"
-if not exist "%SIGNER_TOOL%" (
-  1>&2 echo:signing tool wasn't found
-  set /a "LAST_ERR_CODE=1"
-  goto :end_script
-)
-
 if exist "%OUT_DIR%" (
   rmdir /s /q "%OUT_DIR%"
 )
@@ -33,21 +26,18 @@ pyinstaller "generate_emu_config.py" --distpath "%OUT_DIR%" -y --clean --onedir 
   set /a "LAST_ERR_CODE=1"
   goto :end_script
 )
-call "%SIGNER_TOOL%" "%OUT_DIR%\generate_emu_config\generate_emu_config.exe"
 
 echo:building parse_controller_vdf...
 pyinstaller "controller_config_generator\parse_controller_vdf.py" --distpath "%OUT_DIR%" -y --clean --onedir --name "parse_controller_vdf" --noupx --console -i "NONE" --workpath "%BUILD_TEMP_DIR%" --specpath "%BUILD_TEMP_DIR%" || (
   set /a "LAST_ERR_CODE=1"
   goto :end_script
 )
-call "%SIGNER_TOOL%" "%OUT_DIR%\parse_controller_vdf\parse_controller_vdf.exe"
 
 echo:building parse_achievements_schema...
 pyinstaller "stats_schema_achievement_gen\achievements_gen.py" --distpath "%OUT_DIR%" -y --clean --onedir --name "parse_achievements_schema" --noupx --console -i "NONE" --workpath "%BUILD_TEMP_DIR%" --specpath "%BUILD_TEMP_DIR%" || (
   set /a "LAST_ERR_CODE=1"
   goto :end_script
 )
-call "%SIGNER_TOOL%" "%OUT_DIR%\parse_achievements_schema\parse_achievements_schema.exe"
 
 call ".\bat\_pack_api.bat"
 call ".\bat\_pack_exe.bat"
