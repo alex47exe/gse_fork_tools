@@ -1,6 +1,11 @@
 name: "Build gen_emu_config_old script (Linux)"
 
 on:
+  workflow_run:
+    workflows: ["gen_emu_config_old-gse_release-linux"]
+    branches: [main]
+    types:
+      - completed
   workflow_call:
     # needed since it allows this to become a reusable workflow
   workflow_dispatch:
@@ -18,6 +23,7 @@ jobs:
   build:
     needs: ["gen_emu_config_old-gse_release-linux"]
     runs-on: "ubuntu-20.04"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: "Checkout branch"

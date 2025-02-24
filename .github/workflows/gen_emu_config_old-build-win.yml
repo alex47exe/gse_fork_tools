@@ -1,6 +1,11 @@
 name: "Build gen_emu_config_old script (Windows)"
 
 on:
+  workflow_run:
+    workflows: ["gen_emu_config_old-gse_release-win"]
+    branches: [main]
+    types:
+      - completed
   workflow_call:
     # needed since it allows this to become a reusable workflow
   workflow_dispatch:
@@ -20,6 +25,7 @@ jobs:
   build:
     needs: ["gen_emu_config_old-gse_release-win"]
     runs-on: "windows-2022"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: "Set up Python"
