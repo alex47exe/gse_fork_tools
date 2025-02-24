@@ -1,0 +1,38 @@
+name: Download and extract latest GSE release on Linux
+
+on:
+  workflow_call:
+    # needed since it allows this to become a reusable workflow
+  workflow_dispatch:
+    # allows manual trigger
+
+permissions:
+  contents: "write"
+
+jobs:
+  download_and_extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      #- name: Checkout repository
+      #  uses: actions/checkout@v2
+
+      - name: Download emu-linux-release.tar.bz2
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: 'alex47exe/gse_fork'
+          file-name: 'emu-linux-release.tar.bz2'
+          latest: true
+
+      - name: Download emu-linux-debug.tar.bz2
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: 'alex47exe/gse_fork'
+          file-name: 'emu-linux-debug.tar.bz2'
+          latest: true
+
+      - name: Extract emu-linux-release.tar.bz2
+        run: tar xjf emu-linux-release.tar.bz2 -C ./_gse_prerelease_linux
+
+      - name: Extract emu-linux-debug.tar.bz2
+        run: tar xjf emu-linux-debug.tar.bz2 -C ./_gse_prerelease_linux

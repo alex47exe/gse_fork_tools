@@ -12,7 +12,7 @@ if defined NUMBER_OF_PROCESSORS (
 )
 
 set "ROOT=%cd%"
-set "BUILD_DIR=..\..\..\build\win\vs2022"
+set "BUILD_DIR=..\_gse_release_win"
 set "OUT_DIR=..\build\package\win"
 
 if not exist "%BUILD_DIR%\release\" (
