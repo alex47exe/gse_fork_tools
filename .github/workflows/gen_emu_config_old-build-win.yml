@@ -16,14 +16,37 @@ env:
 
   THIRD_PARTY_BASE_DIR: "third-party"
 
-jobs:
-  gse_rel_win:
-    uses: ./.github/workflows/gen_emu_config_old-gse_release-win.yml
-        
+jobs:  
   build:
     runs-on: "windows-2022"
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download emu-win-release.7z
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: 'alex47exe/gse_fork'
+          fileName: 'emu-win-release.7z'
+          latest: true
+
+      - name: Download emu-win-debug.7z
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: 'alex47exe/gse_fork'
+          fileName: 'emu-win-debug.7z'
+          latest: true
+
+      - name: Install 7z
+        run: choco install 7zip --no-progress
+
+      - name: Extract emu-win-release.7z
+        run: 7z x emu-win-release.7z -oD:/a/gse_fork_tools/_gse_release_win
+
+      - name: Extract emu-win-debug.7z
+        run: 7z x emu-win-debug.7z -oD:/a/gse_fork_tools/_gse_release_win
+
       - name: "Set up Python"
         uses: actions/setup-python@v5
         with:
@@ -38,8 +61,8 @@ jobs:
           git config --system core.autocrlf false
           git config --global core.autocrlf false
 
-      - name: "Checkout branch"
-        uses: actions/checkout@v4
+      #- name: "Checkout branch"
+      #  uses: actions/checkout@v4
 
       # env
       - name: "Install env"
