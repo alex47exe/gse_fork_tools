@@ -14,8 +14,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      #- name: Checkout repository
-      #  uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Download emu-win-release.7z
         uses: robinraju/release-downloader@v1.6
