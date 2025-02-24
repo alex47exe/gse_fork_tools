@@ -42,10 +42,10 @@ jobs:
         run: choco install 7zip --no-progress
 
       - name: Extract emu-win-release.7z
-        run: 7z x emu-win-release.7z -oD:/a/gse_fork_tools/_gse_release_win
+        run: 7z x emu-win-release.7z -oD:/a/gse_fork_tools/gse_fork_tools/_gse_release_win
 
       - name: Extract emu-win-debug.7z
-        run: 7z x emu-win-debug.7z -oD:/a/gse_fork_tools/_gse_release_win
+        run: 7z x emu-win-debug.7z -oD:/a/gse_fork_tools/gse_fork_tools/_gse_release_win
 
       - name: "Set up Python"
         uses: actions/setup-python@v5
