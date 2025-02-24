@@ -26,7 +26,7 @@ if not exist "%BUILD_DIR%\debug\" (
 
 set /a "PKG_EXE_MEM_PERCENT=90"
 set /a "PKG_EXE_DICT_SIZE_MB=384"
-set "PKG_EXE=..\_DEFAULT\0\steam_misc\tools\7za.exe"
+set "PKG_EXE=..\_DEFAULT\0\steam_misc\tools\7za\7za.exe"
 if not exist "%PKG_EXE%" (
   1>&2 echo:packager wasn't found
   goto :end_script_with_err
