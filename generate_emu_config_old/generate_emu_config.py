@@ -665,7 +665,7 @@ def SearchAppId_Google(search_folder, search_str, number_pages):
         with open(os.path.join(os.getcwd(), f"google_results.json"), "wt", encoding='utf-8') as f:
             json.dump(results_data, f, ensure_ascii=False, indent=2)
     else:
-        SearchAppId_Bing(search_str, number_pages)
+        SearchAppId_Bing(search_folder, search_str, number_pages)
 
 def SearchAppId_Bing(search_folder, search_str, number_pages):
     results_bing = Bing().search(search_str, number_pages)
@@ -698,7 +698,7 @@ def SearchAppId_Bing(search_folder, search_str, number_pages):
         with open(os.path.join(os.getcwd(), f"bing_results.json"), "wt", encoding='utf-8') as f:
             json.dump(results_data, f, ensure_ascii=False, indent=2)
     else:
-        SearchAppId_Google(search_str, number_pages)
+        SearchAppId_Google(search_folder, search_str, number_pages)
     
 def help():
     exe_name = os.path.basename(sys.argv[0])
