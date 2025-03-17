@@ -1,4 +1,4 @@
-name: "Build gen_emu_config_old script (Linux)"
+name: "Build gen_emu_config script (Linux)"
 
 on:
   workflow_call:
@@ -10,17 +10,41 @@ permissions:
   contents: "write"
 
 env:
-  ARTIFACT_NAME: "gen_emu_config_old-linux-${{ github.sha }}"
+  ARTIFACT_NAME: "gen_emu_cfg-Linux-Release-${{ github.sha }}"
   SCRIPT_BASE_DIR: "generate_emu_config_old"
   PACKAGE_BASE_DIR: "generate_emu_config_old/bin/linux"
+  THIRD_PARTY_BASE_DIR: "third-party"
 
 jobs:
   build:
     runs-on: "ubuntu-20.04"
 
     steps:
-      - name: "Checkout branch"
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download emu-linux-release.tar.bz2
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: 'alex47exe/gse_fork'
+          fileName: 'emu-linux-release.tar.bz2'
+          latest: true
+
+      - name: Download emu-linux-debug.tar.bz2
+        uses: robinraju/release-downloader@v1.6
+        with:
+          repository: 'alex47exe/gse_fork'
+          fileName: 'emu-linux-debug.tar.bz2'
+          latest: true
+
+      - name: Ensure _gse_release_linux directory exists
+        run: mkdir -p ./_gse_release_linux
+
+      - name: Extract emu-linux-release.tar.bz2
+        run: tar xjf emu-linux-release.tar.bz2 -C ./_gse_release_linux
+
+      - name: Extract emu-linux-debug.tar.bz2
+        run: tar xjf emu-linux-debug.tar.bz2 -C ./_gse_release_linux
 
       # env
       - name: "Install env"
@@ -41,12 +65,17 @@ jobs:
         working-directory: "${{ env.SCRIPT_BASE_DIR }}"
         run: sudo chmod 777 rebuild_linux.sh && ./rebuild_linux.sh
 
-      # upload artifact
+      # compress only contents of bin/win directory into a tar.bz2 archive without preceding paths, using bzip2 compression
+      - name: Compress build package with maximum compression
+        run: |
+          cd ${{ env.SCRIPT_BASE_DIR }}/bin/linux
+          tar -cjf ../../gen_emu_cfg-Linux-Release.tar.bz2 *
+
+      # upload tar.bz2 artifact
       - name: "Upload build package"
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ env.ARTIFACT_NAME }}"
-          path: "${{ env.PACKAGE_BASE_DIR }}/"
+          name: "gen_emu_cfg-Linux-Release-${{ github.sha }}"
+          path: "${{ env.SCRIPT_BASE_DIR }}/gen_emu_cfg-Linux-Release.tar.bz2"
           if-no-files-found: "error"
-          compression-level: 9
           retention-days: 1

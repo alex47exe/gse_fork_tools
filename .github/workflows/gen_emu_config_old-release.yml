@@ -1,0 +1,19 @@
+name: "Gen emu cfg old RELEASE"
+
+on:
+  workflow_dispatch:
+    # allows manual trigger
+
+permissions:
+  contents: "write"
+
+jobs:
+  script-win:
+    name: "Gen emu config win"
+    if: ${{ !cancelled() }}
+    uses: "./.github/workflows/gen_emu_config_old-build-win.yml"
+
+  script-linux:
+    name: "Gen emu config linux"
+    if: ${{ !cancelled() }}
+    uses: "./.github/workflows/gen_emu_config_old-build-linux.yml"
