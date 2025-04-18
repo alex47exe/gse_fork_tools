@@ -48,7 +48,8 @@ def generate_stats_achievements(
                     achievements_out += [out]
             else:
                 out = {}
-                out['default'] = 0
+                out['default'] = '0'
+                out['global'] = '0'
                 out['name'] = stat['name']
                 if 'min' in stat:
                     out['min'] = stat['min']
@@ -92,12 +93,15 @@ def generate_stats_achievements(
     output_stats : list[str] = []
     for s in stats_out:
         default_num = 0
+        global_num = 0
         if f"{s['type']}".lower() == 'int':
             try:
                 default_num = int(s['default'])
+                global_num = int(s['global'])
             except ValueError:
                 try:
                     default_num = int(float(s['default']))
+                    global_num = int(float(s['global']))
                 except ValueError:
                     # we set this to min if someone is failed to set to a fucking int value. and after this and still throwing error I gonna throw the dev out of the windows whoever misstyped that!!!
                     # fixes 282800 | STAT_OJ46_C12 (<---THIS ONE)
@@ -107,7 +111,12 @@ def generate_stats_achievements(
                         raise ValueError('min not exist in (s) and no way to get the data. please report with the appid')
         else:
             default_num = float(s['default'])
-        output_stats.append(f"{s['name']}={s['type']}={default_num}\n")
+            global_num = float(s['global'])
+
+        s['default']=f"{default_num}"
+        s['global']=f"{global_num}"
+        del s['min']
+    output_stats = copy.deepcopy(stats_out)
 
     # print(output_ach)
     # print(output_stats)
@@ -120,11 +129,11 @@ def generate_stats_achievements(
             json.dump(output_ach, f, indent=2)
 
     if output_stats:
-        with open(os.path.join(config_directory, "stats.txt"), 'wt', encoding='utf-8') as f:
-            f.writelines(output_stats)
-            print(f"[ ] Found {len(output_stats)} stats --- writing to <OUT_DIR>\\steam_settings\\stats.txt'")
+        with open(os.path.join(config_directory, "stats.json"), 'wt', encoding='utf-8') as f:
+            json.dump(output_stats, f, indent=2)
+            print(f"[ ] Found {len(output_stats)} stats --- writing to <OUT_DIR>\\steam_settings\\stats.json'")
     else:
-        print(f"[?] No stats found - skip creating <OUT_DIR>\\steam_settings\\stats.txt")
+        print(f"[?] No stats found - skip creating <OUT_DIR>\\steam_settings\\stats.json")
 
     return (achievements_out, stats_out,
             copy_default_unlocked_img, copy_default_locked_img)
