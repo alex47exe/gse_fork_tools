@@ -583,7 +583,7 @@ def get_depots_infos(raw_infos, appid):
 def isConnected():
     try:
         # connect to the host - tells us if the host is actually reachable
-        sock = socket.create_connection(("1.1.1.1", 80))
+        sock = socket.create_connection(("8.8.8.8", 53))
         if sock is not None:
             sock.close
         return True
@@ -706,6 +706,8 @@ def help():
     print(f" Example: {exe_name} 421050 420 480")
     print(f" Example: {exe_name} -img -scr -vids_max -scx -cdx -rne -acw -clr 421050 480")
     print("\nSwitches:")
+    print(" -def1:     use _DEFAULT/1 preset folder for generating the complete game config (default)")
+    print("            or you can use -def2, -def3, -def4 or -def5 for other preset folders")    
     print(" -img:      download art images for each app: Steam generated background, icon, logo, etc...")
     print(" -scr:      download screenshots for each app if they're available")
     print(" -vids_low: download low quality videos for each app if they're available")
