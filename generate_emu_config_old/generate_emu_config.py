@@ -1038,7 +1038,7 @@ def main():
         steam_try_again = True
         REFRESH_TOKEN = refresh_tokens.get(USERNAME)
 
-        webauth, result = WebAuth(), None
+        webauth, result = WebAuth(USERNAME), None
         while result in (
             EResult.TryAnotherCM, EResult.ServiceUnavailable,
             EResult.InvalidPassword, None):
