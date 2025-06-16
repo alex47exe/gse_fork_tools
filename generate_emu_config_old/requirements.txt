@@ -2,3 +2,10 @@ steam[client]
 pyinstaller
 requests
 certifi
+configobj
+beautifulsoup4
+
+
+
+
+
