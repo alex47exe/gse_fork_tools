@@ -615,14 +615,14 @@ def GetListOfSubstrings(stringSubject,string1,string2):
 
 # https://stackoverflow.com/a/13641746 # NOTE using this fix a strange issue where some DLC names had starting and trailing double quotes ( " )
 def ReplaceStringInFile(f_file, search_string, old_string, new_string):
-    with open(f_file, 'r') as file:
+    with open(f_file, 'r', encoding="utf-8") as file:
         lines = file.readlines()
         #matching_lines = [line.strip() for line in lines if ' = "' in line]
         #return matching_lines
         for line in lines:
             if search_string in line:
                 # Read contents from file as a single string
-                f_handle = open(f_file, 'r')
+                f_handle = open(f_file, 'r', encoding="utf-8")
                 f_string = f_handle.read()
                 f_handle.close()
 
@@ -630,7 +630,7 @@ def ReplaceStringInFile(f_file, search_string, old_string, new_string):
                 f_string = (re.sub(old_string, new_string, f_string))
 
                 # Write contents to file - using 'w' truncates the file
-                f_handle = open(f_file, 'w')
+                f_handle = open(f_file, 'w', encoding="utf-8")
                 f_handle.write(f_string)
                 f_handle.close()
 
@@ -1340,11 +1340,11 @@ def main():
         ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), ' = "', '"', '')
 
         # ConfigObj overrides the default ini format, adding spaces before and after '=' and '""' for empty keys, so we'll use this to undo the changes
-        with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'r') as file:
+        with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'r', encoding="utf-8") as file:
             filedata = file.read()
         filedata = filedata.replace(' = ""', '=')
         filedata = filedata.replace(' = ', '=')
-        with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w') as file:
+        with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
             file.write(filedata)
 
         ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '56789=', '#   56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
