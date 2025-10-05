@@ -1,4 +1,4 @@
-steam[client] @ git+https://github.com/alex47exe/steam_fork.git
+steam[client] @ git+https://github.com/alex47exe/steam_fork.git@patch-1
 pyinstaller
 requests
 certifi
