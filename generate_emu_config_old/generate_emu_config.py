@@ -345,6 +345,23 @@ def get_stats_schema(client, game_id, owner_id):
     client.send(message)
     return client.wait_msg(EMsg.ClientGetUserStatsResponse, timeout=5)
 
+def get_global_achievement_percentages(game_id):
+    """Get global achievement percentages from Steam Web API"""
+    try:
+        # Using Steam Web API to get global achievement percentages
+        url = f"https://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/?gameid={game_id}"
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            if 'achievementpercentages' in data and 'achievements' in data['achievementpercentages']:
+                percentages = {}
+                for ach in data['achievementpercentages']['achievements']:
+                    percentages[ach['name']] = ach['percent']
+                return percentages
+    except Exception as e:
+        print(f"[?] Error fetching global achievement percentages: {e}")
+    return None
+
 def download_achievement_images(game_id : int, image_names : set[str], output_folder : str):
     print(f"[ ] Found {len(image_names)} achievements images --- downloading to <OUT_DIR>\\steam_settings\\img folder")
 
@@ -438,6 +455,33 @@ def generate_achievement_stats(client, game_id : int, output_directory, backup_d
         if copy_default_locked_img:
             shutil.copy(os.path.join(get_exe_dir(), "steam_default_icon_locked.jpg"), achievement_images_dir)
         download_achievement_images(game_id, images_to_download, achievement_images_dir)
+
+    # Fetch and save global achievement percentages
+    if achievements:
+        try:
+            global_percentages = get_global_achievement_percentages(game_id)
+            if global_percentages:
+                # Create achievements list with global percentages
+                achievements_global = []
+                for ach in achievements:
+                    ach_name = ach.get('name', '')
+                    ach_global = {
+                        'name': ach_name,
+                        'percentage': global_percentages.get(ach_name, 0.0)
+                    }
+                    achievements_global.append(ach_global)
+                
+                # Write to achievements.json.glb
+                if achievements_global:
+                    glb_file_path = os.path.join(output_directory, "achievements.json.glb")
+                    with open(glb_file_path, 'wt', encoding='utf-8') as f:
+                        json.dump(achievements_global, f, indent=2)
+                    print(f"[ ] Writing global achievement percentages to <OUT_DIR>\\steam_settings\\achievements.json.glb")
+            else:
+                print(f"[?] Could not fetch global achievement percentages from Steam Web API")
+        except Exception as e:
+            print(f"[?] Error while processing global achievement percentages: {e}")
+            # Continue without global percentages - this is not critical
 
     return achievements
 
