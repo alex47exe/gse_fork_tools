@@ -2,7 +2,8 @@ import pathlib
 import time
 from stats_schema_achievement_gen import achievements_gen
 from external_components import (
-    ach_watcher_gen, cdx_gen, app_images, app_details, safe_name
+    ach_watcher_gen, cdx_gen, app_images, app_details, safe_name,
+    cloud_dirs
 )
 from controller_config_generator import parse_controller_vdf
 from steam.client import SteamClient
@@ -581,6 +582,7 @@ def help():
     print(" -skip_ach: skip downloading & generating achievements and their images")
     print(" -skip_con: skip downloading & generating controller configuration files")
     print(" -skip_inv: skip downloading & generating inventory data (items.json & default_items.json)")
+    print(" -skip_cloud_dirs: skip parsing directories for cloud saves")
     print("\nAll switches are optional except app id, at least 1 app id must be provided")
     print("\nAutomate the login prompt:")
     print(" * You can create a file called 'my_login.txt' beside the script, then add your username on the first line")
@@ -631,6 +633,7 @@ def main():
     SKIP_ACH = False
     SKIP_CONTROLLER = False
     SKIP_INVENTORY = False
+    SKIP_CLOUD_DIRS = False
     
     prompt_for_unavailable = True
 
@@ -674,6 +677,8 @@ def main():
             SKIP_CONTROLLER = True
         elif f'{appid}'.lower() == '-skip_inv':
             SKIP_INVENTORY = True
+        elif f'{appid}'.lower() == '-skip_cloud_dirs':
+            SKIP_CLOUD_DIRS = True
         else:
             print(f'[X] invalid switch: {appid}')
             help()
@@ -1026,6 +1031,31 @@ def main():
                 icon,
                 logo,
                 logo_small)
+        
+        if not SKIP_CLOUD_DIRS:
+            (save_files, save_file_overrides) = cloud_dirs.parse_cloud_dirs(game_info)
+
+            win_cloud_dirs = cloud_dirs.get_ufs_dirs("Windows", save_files, save_file_overrides)
+            for idx in range(len(win_cloud_dirs)):
+                merge_dict(out_config_app_ini, {
+                    'configs.app.ini': {
+                        'app::cloud_save::win': {
+                            f"dir{idx + 1}": (win_cloud_dirs[idx], ''),
+                        }
+                    }
+                })
+
+
+            linux_cloud_dirs = cloud_dirs.get_ufs_dirs("Linux", save_files, save_file_overrides)
+            for idx in range(len(linux_cloud_dirs)):
+                merge_dict(out_config_app_ini, {
+                    'configs.app.ini': {
+                        'app::cloud_save::linux': {
+                            f"dir{idx + 1}": (linux_cloud_dirs[idx], ''),
+                        }
+                    }
+                })
+
         
         if DISABLE_EXTRA:
             merge_dict(out_config_app_ini, EXTRA_FEATURES_DISABLE)
