@@ -1,4 +1,4 @@
-steam[client] @ git+https://github.com/detiam/steam_websocket@c477dee8cdb9a1853712510cf9b2d51b3d438d94
+steam[client] @ git+https://github.com/alex47exe/steam_fork.git@patch-1
 pyinstaller
 requests
 certifi
