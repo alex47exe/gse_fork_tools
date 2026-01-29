@@ -1827,7 +1827,7 @@ if __name__ == "__main__":
         internet_info = check_internet()
         print(internet_info["summary"])
 
-        if internet_info["status"] <> "offline":
+        if internet_info["status"] != "offline":
             main()
         else:
             print(" ")
