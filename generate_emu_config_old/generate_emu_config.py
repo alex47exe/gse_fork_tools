@@ -21,6 +21,7 @@ import queue
 import requests
 import shutil
 import socket
+import urllib.request
 import time
 import threading
 import traceback
@@ -579,17 +580,74 @@ def get_depots_infos(raw_infos, appid):
     except Exception:
         return (set(), set(), set())
     
-# https://stackoverflow.com/a/62115290
-def isConnected():
+
+def check_internet(
+    test_url="https://www.google.com",
+    http_timeout=5,
+    dns_hosts={
+        "8.8.8.8": "Google DNS",
+        "1.1.1.1": "Cloudflare DNS"
+    },
+    dns_port=53,
+    dns_timeout=3
+):
+    """
+    Returns a dict with:
+        status: "google_ok", "dns_ok", "offline"
+        google_ok: True/False
+        dns_ok: True/False
+        dns_server: IP of responding DNS server
+        dns_provider: provider name
+        dns_port: port used
+        summary: human-readable status line
+    """
+
+    result = {
+        "status": None,
+        "google_ok": False,
+        "dns_ok": False,
+        "dns_server": None,
+        "dns_provider": None,
+        "dns_port": dns_port,
+        "summary": "",
+    }
+
+    # --- Primary check: HTTPS on port 443 (Google) ---
     try:
-        # connect to the host - tells us if the host is actually reachable
-        sock = socket.create_connection(("8.8.8.8", 53))
-        if sock is not None:
-            sock.close
-        return True
-    except OSError:
-        pass
-    return False
+        urllib.request.urlopen(test_url, timeout=http_timeout)
+        result["google_ok"] = True
+        result["status"] = "google_ok"
+        result["summary"] = f"Internet Connection - Online, Google OK via {test_url}"
+        return result
+    except Exception:
+        pass  # fallback to DNS
+
+    # --- Fallback: try each DNS server ---
+    for host, provider in dns_hosts.items():
+        try:
+            socket.setdefaulttimeout(dns_timeout)
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, dns_port))
+
+            result["dns_ok"] = True
+            result["dns_server"] = host
+            result["dns_provider"] = provider
+            result["status"] = "dns_ok"
+            result["summary"] = (
+                f"Internet Connection - Partial, {provider} reachable via {host}:{dns_port}"
+            )
+            return result
+
+        except Exception:
+            continue
+
+    # --- Fully offline ---
+    result["status"] = "offline"
+    result["summary"] = "Internet Connection - Offline"
+    return result
+
+# Example usage:
+#info = check_internet()
+#print(info["summary"])
 
 # https://stackoverflow.com/a/48336994    
 def GetListOfSubstrings(stringSubject,string1,string2):
@@ -1766,7 +1824,10 @@ def _tracebackPrint(_errorValue):
 
 if __name__ == "__main__":
     try:
-        if isConnected():
+        internet_info = check_internet()
+        print(internet_info["summary"])
+
+        if internet_info["status"] <> "offline":
             main()
         else:
             print(" ")
