@@ -23,7 +23,7 @@ def generate_stats_achievements(
         stat_info = sch['stats']
         for s in stat_info:
             stat = stat_info[s]
-            if stat['type'] == STAT_TYPE_BITS:
+            if stat['type'] == STAT_TYPE_BITS or stat['type'] == 'ACHIEVEMENTS':
                 achs = stat['bits']
                 for ach_num in achs:
                     out = {}
@@ -53,11 +53,11 @@ def generate_stats_achievements(
                 out['name'] = stat['name']
                 if 'min' in stat:
                     out['min'] = stat['min']
-                if stat['type'] == STAT_TYPE_INT:
+                if stat['type'] == STAT_TYPE_INT or stat['type'] == 'INT':
                     out['type'] = 'int'
-                elif stat['type'] == STAT_TYPE_FLOAT:
+                elif stat['type'] == STAT_TYPE_FLOAT or stat['type'] == 'FLOAT':
                     out['type'] = 'float'
-                elif stat['type'] == STAT_TYPE_AVGRATE:
+                elif stat['type'] == STAT_TYPE_AVGRATE or stat['type'] == 'AVGRATE':
                     out['type'] = 'avgrate'
                 if 'Default' in stat:
                     out['default'] = stat['Default']
