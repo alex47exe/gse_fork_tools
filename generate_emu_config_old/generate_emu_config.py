@@ -1,5 +1,5 @@
 from external_components import (
-    ach_watcher_gen, cdx_gen, rne_gen, app_images, app_details, safe_name, scx_gen, pcgw_page, top_own
+    ach_watcher_gen, cdx_gen, rne_gen, app_images, app_details, safe_name, scx_gen, pcgw_page, top_own, cloud_dirs
 )
 from stats_schema_achievement_gen import achievements_gen
 from controller_config_generator import parse_controller_vdf
@@ -719,6 +719,7 @@ def help():
     print(" -skip_ach: skip downloading & generating achievements and their images")
     print(" -skip_con: skip downloading & generating controller configuration files (action sets txt files)")
     print(" -skip_inv: skip downloading & generating inventory data ('items.json' & 'default_items.json')")
+    print(" -skip_cld: skip parsing directories for cloud saves")
     print(" -rel_out:  generate complete game config in _OUTPUT/appid folder, relative to the bat, sh or app calling generate_emu_config app")
     print(" -rel_raw:  generate complete game config in the same folder that contains the bat, sh or app calling generate_emu_config app")
     print(" -anon:     login as an anonymous account, these have very limited access and cannot get all app details")
@@ -760,6 +761,7 @@ def main():
     SKIP_ACH = False
     SKIP_CONTROLLER = False
     SKIP_INVENTORY = False
+    SKIP_CLOUD_DIRS = False
     #DEFAULT_PRESET = True
     DEFAULT_PRESET_NO = 1
 
@@ -811,6 +813,8 @@ def main():
             SKIP_CONTROLLER = True
         elif f'{appid}'.lower() == '-skip_inv':
             SKIP_INVENTORY = True
+        elif f'{appid}'.lower() == '-skip_cld':
+            SKIP_CLOUD_DIRS = True
         elif f'{appid}'.lower() == '-def1':
             #DEFAULT_PRESET = True
             DEFAULT_PRESET_NO = 1
@@ -1612,6 +1616,30 @@ def main():
                 with open(os.path.join(info_out_dir, "config_ufs.json"), "wt", encoding='utf-8') as f:
                     json.dump(savegame_configs, f, ensure_ascii=False, indent=2)
                     #print(f"[ ] Writing 'config_ufs.json'")
+
+                if not SKIP_CLOUD_DIRS:
+                    (save_files, save_file_overrides) = cloud_dirs.parse_cloud_dirs(game_info)
+
+                    win_cloud_dirs = cloud_dirs.get_ufs_dirs("Windows", save_files, save_file_overrides)
+                    for idx in range(len(win_cloud_dirs)):
+                        merge_dict(out_config_app_ini, {
+                            'configs.app.ini': {
+                                'app::cloud_save::win': {
+                                    f"dir{idx + 1}": (win_cloud_dirs[idx], ''),
+                                }
+                            }
+                        })
+
+
+                    linux_cloud_dirs = cloud_dirs.get_ufs_dirs("Linux", save_files, save_file_overrides)
+                    for idx in range(len(linux_cloud_dirs)):
+                        merge_dict(out_config_app_ini, {
+                            'configs.app.ini': {
+                                'app::cloud_save::linux': {
+                                    f"dir{idx + 1}": (linux_cloud_dirs[idx], ''),
+                                }
+                            }
+                        })
                 
         inventory_data = None
         if not SKIP_INVENTORY:
