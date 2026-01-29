@@ -1344,8 +1344,6 @@ def main():
         else:
             print(f"[?] No supported languages found - skip creating <OUT_DIR>\\steam_settings\\supported_languages.txt")
 
-        ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '#   56789=', '56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
-
         # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- START, read ini
         configs_app = ConfigObj(os.path.join(emu_settings_dir, "configs.app.ini"), encoding='utf-8')
 
@@ -1362,6 +1360,11 @@ def main():
         dlc_list, depot_app_list, all_depots, all_branches = get_depots_infos(game_info, appid)
         dlc_raw = {}
         if dlc_list:
+            ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '#   56789=', '56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
+
+            # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- START, read ini
+            configs_app = ConfigObj(os.path.join(emu_settings_dir, "configs.app.ini"), encoding='utf-8')
+
             dlc_raw = client.get_product_info(apps=dlc_list)["apps"]
             for dlc in dlc_raw:
                 dlc_name = ''
@@ -1391,16 +1394,6 @@ def main():
             # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- END, write ini
             configs_app.write() 
             #print(f"[ ] Writing 'configs.app.ini'")
-
-            ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), ' = "', '"', '')
-
-            # ConfigObj overrides the default ini format, adding spaces before and after '=' and '""' for empty keys, so we'll use this to undo the changes
-            with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'r', encoding="utf-8") as file:
-                filedata = file.read()
-            filedata = filedata.replace(' = ""', '=')
-            filedata = filedata.replace(' = ', '=')
-            with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
-                file.write(filedata)
 
             ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '56789=', '#   56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
 
@@ -1716,6 +1709,17 @@ def main():
 
                         configs_app.write()
                         #print(f"[ ] Writing 'configs.app.ini'")
+
+        ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), ' = "', '"', '')
+
+        # ConfigObj overrides the default ini format, adding spaces before and after '=' and '""' for empty keys, so we'll use this to undo the changes
+        with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'r', encoding="utf-8") as file:
+            filedata = file.read()
+        filedata = filedata.replace(' = ""', '=')
+        filedata = filedata.replace(' = ', '=')
+        filedata = filedata.replace('dir2=', '') # remove empty 'dir2=' entry for cloud_save
+        with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
+            file.write(filedata)
     
         inventory_data = None
         if not SKIP_INVENTORY:
