@@ -1389,7 +1389,7 @@ def main():
                 # used x[1].encode('utf-8') instead of str(x[1]) to properly deal with DLC names containing special characters like (TM) sign, (C) sign, etc
 
             # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- END, write ini
-            #configs_app.write() # disable it here, use it after cloud_dirs check, so that they are properly written too 
+            configs_app.write() 
             #print(f"[ ] Writing 'configs.app.ini'")
 
             ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), ' = "', '"', '')
@@ -1680,17 +1680,43 @@ def main():
                     (save_files, save_file_overrides) = cloud_dirs.parse_cloud_dirs(game_info)
 
                     win_cloud_dirs = cloud_dirs.get_ufs_dirs("Windows", save_files, save_file_overrides)
-                    for idx in range(len(win_cloud_dirs)):
-                        configs_app['app::cloud_save::win'][f"dir{idx + 1}"] = win_cloud_dirs[idx]
+                    if len(win_cloud_dirs) >= 1:
+                        lines_cfg_app = [
+                            "[app::cloud_save::win]\n",
+                            "dir1=\n",
+                            "dir2=\n",
+                            "\n"
+                        ]
+                        with open(os.path.join(emu_settings_dir, "configs.app.ini"), "a", encoding="utf-8") as f:
+                            f.writelines(lines_cfg_app)
+
+                        configs_app = ConfigObj(os.path.join(emu_settings_dir, "configs.app.ini"), encoding='utf-8')
+
+                        for idx in range(len(win_cloud_dirs)):
+                            configs_app['app::cloud_save::win'][f"dir{idx + 1}"] = win_cloud_dirs[idx]
+
+                        configs_app.write()
+                        #print(f"[ ] Writing 'configs.app.ini'")
 
                     linux_cloud_dirs = cloud_dirs.get_ufs_dirs("Linux", save_files, save_file_overrides)
-                    for idx in range(len(linux_cloud_dirs)):
-                        configs_app['app::cloud_save::linux'][f"dir{idx + 1}"] = linux_cloud_dirs[idx]
+                    if len(linux_cloud_dirs) >= 1:
+                        lines_cfg_app = [
+                            "[app::cloud_save::linux]\n",
+                            "dir1=\n",
+                            "dir2=\n",
+                            "\n"
+                        ]
+                        with open(os.path.join(emu_settings_dir, "configs.app.ini"), "a", encoding="utf-8") as f:
+                            f.writelines(lines_cfg_app)
 
-        # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- END, write ini
-        configs_app.write()
-        #print(f"[ ] Writing 'configs.app.ini'")
-                
+                        configs_app = ConfigObj(os.path.join(emu_settings_dir, "configs.app.ini"), encoding='utf-8')
+
+                        for idx in range(len(linux_cloud_dirs)):
+                            configs_app['app::cloud_save::linux'][f"dir{idx + 1}"] = linux_cloud_dirs[idx]
+
+                        configs_app.write()
+                        #print(f"[ ] Writing 'configs.app.ini'")
+    
         inventory_data = None
         if not SKIP_INVENTORY:
             inventory_data = generate_inventory(client, appid)
