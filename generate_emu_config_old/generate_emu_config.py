@@ -1379,6 +1379,31 @@ def main():
                 print(f"[ ] Found {len(dlc_config_list)} DLC --- writing to <OUT_DIR>\\steam_settings\\configs.app.ini")
             else:
                 print(f"[ ] Found {len(dlc_config_list)} DLCs --- writing to <OUT_DIR>\\steam_settings\\configs.app.ini")
+
+            # we set unlock_all=0 nonetheless, to make the emu lock DLCs, otherwise everything is allowed
+            # some games use that as a detection mechanism 
+            #configs["app::dlcs"]["unlock_all"] = str(0) #updated ini through ConfigObj - disabled, keep the existing value from default 'configs.app.ini'
+
+            for x in dlc_config_list:
+                configs_app["app::dlcs"][str(x[0])] = str(x[1]) #updated ini through ConfigObj
+                # used x[1].encode('utf-8') instead of str(x[1]) to properly deal with DLC names containing special characters like (TM) sign, (C) sign, etc
+
+            # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- END, write ini
+            #configs_app.write() # disable it here, use it after cloud_dirs check, so that they are properly written too 
+            #print(f"[ ] Writing 'configs.app.ini'")
+
+            ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), ' = "', '"', '')
+
+            # ConfigObj overrides the default ini format, adding spaces before and after '=' and '""' for empty keys, so we'll use this to undo the changes
+            with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'r', encoding="utf-8") as file:
+                filedata = file.read()
+            filedata = filedata.replace(' = ""', '=')
+            filedata = filedata.replace(' = ', '=')
+            with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
+                file.write(filedata)
+
+            ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '56789=', '#   56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
+
         else:
             print(f"[?] No DLCs found - skip writing to <OUT_DIR>\\steam_settings\\configs.app.ini")
 
@@ -1386,30 +1411,6 @@ def main():
             with open(os.path.join(info_out_dir, "dlc_product_info.json"), "wt", encoding='utf-8') as f:
                 json.dump(dlc_raw, f, ensure_ascii=False, indent=2)
                 #print(f"[ ] Writing 'dlc_product_info.json'")
-
-        # we set unlock_all=0 nonetheless, to make the emu lock DLCs, otherwise everything is allowed
-        # some games use that as a detection mechanism 
-        #configs["app::dlcs"]["unlock_all"] = str(0) #updated ini through ConfigObj - disabled, keep the existing value from default 'configs.app.ini'
-
-        for x in dlc_config_list:
-            configs_app["app::dlcs"][str(x[0])] = str(x[1]) #updated ini through ConfigObj
-            # used x[1].encode('utf-8') instead of str(x[1]) to properly deal with DLC names containing special characters like (TM) sign, (C) sign, etc
-
-        # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- END, write ini
-        #configs_app.write() # disable it here, use it after cloud_dirs check, so that they are properly written too 
-        #print(f"[ ] Writing 'configs.app.ini'")
-
-        ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), ' = "', '"', '')
-
-        # ConfigObj overrides the default ini format, adding spaces before and after '=' and '""' for empty keys, so we'll use this to undo the changes
-        with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'r', encoding="utf-8") as file:
-            filedata = file.read()
-        filedata = filedata.replace(' = ""', '=')
-        filedata = filedata.replace(' = ', '=')
-        with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
-            file.write(filedata)
-
-        ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '56789=', '#   56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
 
         # use ConfigObj to correctly update existing 'configs.main.ini' copied from ./DEFAULT configuration --- START, read ini
         configs_main = ConfigObj(os.path.join(emu_settings_dir, "configs.main.ini"), encoding='utf-8')
