@@ -1677,8 +1677,7 @@ def main():
                         lines_cfg_app = [
                             "[app::cloud_save::win]\n",
                             "dir1=\n",
-                            "dir2=\n",
-                            "\n"
+                            "dir2=\n"
                         ]
                         with open(os.path.join(emu_settings_dir, "configs.app.ini"), "a", encoding="utf-8") as f:
                             f.writelines(lines_cfg_app)
@@ -1696,8 +1695,7 @@ def main():
                         lines_cfg_app = [
                             "[app::cloud_save::linux]\n",
                             "dir1=\n",
-                            "dir2=\n",
-                            "\n"
+                            "dir2=\n"
                         ]
                         with open(os.path.join(emu_settings_dir, "configs.app.ini"), "a", encoding="utf-8") as f:
                             f.writelines(lines_cfg_app)
@@ -1718,6 +1716,7 @@ def main():
         filedata = filedata.replace(' = ""', '=')
         filedata = filedata.replace(' = ', '=')
         filedata = filedata.replace('dir2=', '') # remove empty 'dir2=' entry for cloud_save
+        filedata = filedata.replace('#{::', '#dir2={::') # add back '#dir2=' to the format examples
         with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
             file.write(filedata)
     
