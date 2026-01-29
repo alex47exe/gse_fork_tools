@@ -1396,7 +1396,7 @@ def main():
             # used x[1].encode('utf-8') instead of str(x[1]) to properly deal with DLC names containing special characters like (TM) sign, (C) sign, etc
 
         # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- END, write ini
-        configs_app.write()
+        #configs_app.write() # disable it here, use it after cloud_dirs check, so that they are properly written too 
         #print(f"[ ] Writing 'configs.app.ini'")
 
         ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), ' = "', '"', '')
@@ -1680,24 +1680,15 @@ def main():
 
                     win_cloud_dirs = cloud_dirs.get_ufs_dirs("Windows", save_files, save_file_overrides)
                     for idx in range(len(win_cloud_dirs)):
-                        merge_dict(out_config_app_ini, {
-                            'configs.app.ini': {
-                                'app::cloud_save::win': {
-                                    f"dir{idx + 1}": (win_cloud_dirs[idx], ''),
-                                }
-                            }
-                        })
-
+                        configs_app['app::cloud_save::win'][f"dir{idx + 1}"] = win_cloud_dirs[idx]
 
                     linux_cloud_dirs = cloud_dirs.get_ufs_dirs("Linux", save_files, save_file_overrides)
                     for idx in range(len(linux_cloud_dirs)):
-                        merge_dict(out_config_app_ini, {
-                            'configs.app.ini': {
-                                'app::cloud_save::linux': {
-                                    f"dir{idx + 1}": (linux_cloud_dirs[idx], ''),
-                                }
-                            }
-                        })
+                        configs_app['app::cloud_save::linux'][f"dir{idx + 1}"] = linux_cloud_dirs[idx]
+
+        # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- END, write ini
+        configs_app.write()
+        #print(f"[ ] Writing 'configs.app.ini'")
                 
         inventory_data = None
         if not SKIP_INVENTORY:
