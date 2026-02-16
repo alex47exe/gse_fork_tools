@@ -471,7 +471,7 @@ def download_published_file(client, published_file_id, backup_directory):
     if not os.path.exists(backup_directory):
         os.makedirs(backup_directory)
 
-    with open(os.path.join(backup_directory, "info.txt"), "w") as f:
+    with open(os.path.join(backup_directory, "info.txt"), "w", encoding='utf-8') as f:
         f.write(str(ugc_info.body))
 
     if len(file_details.file_url) > 0:
@@ -479,7 +479,7 @@ def download_published_file(client, published_file_id, backup_directory):
             response = requests.get(file_details.file_url, allow_redirects=True)
             response.raise_for_status()
             data = response.content
-            with open(os.path.join(backup_directory, file_details.filename.replace("/", "_").replace("\\", "_")), "wb") as f:
+            with open(os.path.join(backup_directory, file_details.filename.replace("/", "_").replace("\\", "_")), "wb", encoding='utf-8') as f:
                 f.write(data)
             return data
         except Exception as e:
@@ -1413,11 +1413,11 @@ def main():
         #print(f"[ ] Writing 'configs.main.ini'")
 
         # ConfigObj overrides the default ini format, adding spaces before and after '=' and '""' for empty keys, so we'll use this to undo the changes
-        with open(os.path.join(emu_settings_dir, "configs.main.ini"), 'r') as file:
+        with open(os.path.join(emu_settings_dir, "configs.main.ini"), 'r', encoding='utf-8') as file:
             filedata = file.read()
         filedata = filedata.replace(' = ""', '=')
         filedata = filedata.replace(' = ', '=')
-        with open(os.path.join(emu_settings_dir, "configs.main.ini"), 'w') as file:
+        with open(os.path.join(emu_settings_dir, "configs.main.ini"), 'w', encoding='utf-8') as file:
             file.write(filedata)
 
         # use ConfigObj to correctly update existing 'configs.overlay.ini' copied from ./DEFAULT configuration --- START, read ini
@@ -1428,11 +1428,11 @@ def main():
         #print(f"[ ] Writing 'configs.overlay.ini'")
 
         # ConfigObj overrides the default ini format, adding spaces before and after '=' and '""' for empty keys, so we'll use this to undo the changes
-        with open(os.path.join(emu_settings_dir, "configs.overlay.ini"), 'r') as file:
+        with open(os.path.join(emu_settings_dir, "configs.overlay.ini"), 'r', encoding='utf-8') as file:
             filedata = file.read()
         filedata = filedata.replace(' = ""', '=')
         filedata = filedata.replace(' = ', '=')
-        with open(os.path.join(emu_settings_dir, "configs.overlay.ini"), 'w') as file:
+        with open(os.path.join(emu_settings_dir, "configs.overlay.ini"), 'w', encoding='utf-8') as file:
             file.write(filedata)
 
         # use ConfigObj to correctly update existing 'configs.user.ini' copied from ./DEFAULT configuration --- START, read ini
@@ -1443,11 +1443,11 @@ def main():
         #print(f"[ ] Writing 'configs.user.ini'")
 
         # ConfigObj overrides the default ini format, adding spaces before and after '=' and '""' for empty keys, so we'll use this to undo the changes
-        with open(os.path.join(emu_settings_dir, "configs.user.ini"), 'r') as file:
+        with open(os.path.join(emu_settings_dir, "configs.user.ini"), 'r', encoding='utf-8') as file:
             filedata = file.read()
         filedata = filedata.replace(' = ""', '=')
         filedata = filedata.replace(' = ', '=')
-        with open(os.path.join(emu_settings_dir, "configs.user.ini"), 'w') as file:
+        with open(os.path.join(emu_settings_dir, "configs.user.ini"), 'w', encoding='utf-8') as file:
             file.write(filedata)
 
         if all_depots:
@@ -1749,7 +1749,7 @@ def main():
             else:
                 print(f"[ ] Found {len(inventory)} inventory item --- writing to <OUT_DIR>\\steam_settings\\items.json & default_items.json")
 
-            with open(os.path.join(backup_dir, f"InventoryItems_{appid}.json"), "w") as f:
+            with open(os.path.join(backup_dir, f"InventoryItems_{appid}.json"), "w", encoding='utf-8') as f:
                 f.write(raw_inventory)
                 #print(f"[ ] Writing 'inventory.json'")
 
