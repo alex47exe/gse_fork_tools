@@ -1360,7 +1360,7 @@ def main():
         dlc_list, depot_app_list, all_depots, all_branches = get_depots_infos(game_info, appid)
         dlc_raw = {}
         if dlc_list:
-            ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '#   56789=', '56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
+            ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '#   56789=', '56789 = ') # make sure we write DLCs after '#   56789=This is another example DLC name'
 
             # use ConfigObj to correctly update existing 'configs.app.ini' copied from ./DEFAULT configuration --- START, read ini
             configs_app = ConfigObj(os.path.join(emu_settings_dir, "configs.app.ini"), encoding='utf-8')
@@ -1395,7 +1395,7 @@ def main():
             configs_app.write() 
             #print(f"[ ] Writing 'configs.app.ini'")
 
-            ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '56789=', '#   56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
+            ReplaceStringInFile(os.path.join(emu_settings_dir, "configs.app.ini"), 'This is another example DLC name', '56789 = ', '#   56789=') # make sure we write DLCs after '#   56789=This is another example DLC name'
 
         else:
             print(f"[?] No DLCs found - skip writing to <OUT_DIR>\\steam_settings\\configs.app.ini")
