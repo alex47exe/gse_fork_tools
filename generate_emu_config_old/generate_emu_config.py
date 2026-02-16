@@ -1716,6 +1716,17 @@ def main():
         filedata = filedata.replace(' = ""', '=')
         filedata = filedata.replace(' = ', '=')
         filedata = re.sub(r'(?m)^dir\d+=[ \t]*\n', '', filedata) # remove empty 'dirN=' entries for cloud_save
+        
+        # Remove commented FORMAT EXAMPLES section if actual cloud save sections were generated
+        if not SKIP_CLOUD_DIRS and ("ufs" in game_info):
+            # Remove the entire commented FORMAT EXAMPLES block to avoid confusion
+            filedata = re.sub(
+                r'# === FORMAT EXAMPLES.*?#\[app::cloud_save::linux\]\n(?:#dir\d+=.*?\n)*',
+                '',
+                filedata,
+                flags=re.DOTALL
+            )
+        
         with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
             file.write(filedata)
     
