@@ -127,11 +127,11 @@ def generate_stats_achievements(
 
     if output_ach:
         with open(os.path.join(config_directory, "achievements.json"), 'wt', encoding='utf-8') as f:
-            json.dump(output_ach, f, indent=2)
+            json.dump(output_ach, f, indent=2, ensure_ascii=False)
 
     if output_stats:
         with open(os.path.join(config_directory, "stats.json"), 'wt', encoding='utf-8') as f:
-            json.dump(output_stats, f, indent=2)
+            json.dump(output_stats, f, indent=2, ensure_ascii=False)
             print(f"[ ] Found {len(output_stats)} stats --- writing to <OUT_DIR>\\steam_settings\\stats.json'")
     else:
         print(f"[?] No stats found - skip creating <OUT_DIR>\\steam_settings\\stats.json")
