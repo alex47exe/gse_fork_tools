@@ -127,7 +127,8 @@ def get_ufs_dirs(
     # then easily detect that by looking for the pattern "::" or "{::"
     # and decide the appropriate action to take
 
-    paths: set[str] = set()
+    paths: list[str] = []
+    seen: set[str] = set()  # Track duplicates while preserving order
     # if we have overrides then only use them
     if ufs.save_file_overrides:
         for ufs_override in ufs.save_file_overrides:
@@ -163,7 +164,10 @@ def get_ufs_dirs(
                 if path_after_root_original:
                     new_path += f"/{path_after_root_original}"
                 
-                paths.add(fixup_vars(new_path))
+                final_path = fixup_vars(new_path)
+                if final_path not in seen:
+                    paths.append(final_path)
+                    seen.add(final_path)
     else: # otherwise (no overrides) use all relevant UFS entries
         for save_file in ufs.save_files:
             new_path = f"{{::{save_file.root.strip()}::}}"
@@ -171,7 +175,10 @@ def get_ufs_dirs(
             if path_after_root:
                 new_path += f"/{path_after_root}"
             
-            paths.add(fixup_vars(new_path))
+            final_path = fixup_vars(new_path)
+            if final_path not in seen:
+                paths.append(final_path)
+                seen.add(final_path)
     
 
-    return list(paths)
+    return paths
