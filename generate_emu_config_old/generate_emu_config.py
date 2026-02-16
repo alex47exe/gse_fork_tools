@@ -479,7 +479,7 @@ def download_published_file(client, published_file_id, backup_directory):
             response = requests.get(file_details.file_url, allow_redirects=True)
             response.raise_for_status()
             data = response.content
-            with open(os.path.join(backup_directory, file_details.filename.replace("/", "_").replace("\\", "_")), "wb", encoding='utf-8') as f:
+            with open(os.path.join(backup_directory, file_details.filename.replace("/", "_").replace("\\", "_")), "wb") as f:
                 f.write(data)
             return data
         except Exception as e:
