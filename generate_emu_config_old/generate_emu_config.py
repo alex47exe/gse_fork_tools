@@ -1731,7 +1731,7 @@ def main():
         filedata = filedata.replace(' = ', '=')
         filedata = re.sub(r"^dir[1-9]=\s*$\n?", "", filedata, flags=re.MULTILINE) # remove empty 'dir2=' lines entry for cloud_save
         #filedata = filedata.replace('#{::', '#dir2={::') # add back '#dir2=' to the format examples - not needed anymore, as only empty 'dir2=' will be removed
-        filedata = filddata.replace('gameinstall', 'GameInstall')
+        filedata = filedata.replace('gameinstall', 'GameInstall')
         with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
             file.write(filedata)
     
