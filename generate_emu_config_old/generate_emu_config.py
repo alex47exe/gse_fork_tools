@@ -1718,10 +1718,14 @@ def main():
         filedata = re.sub(r'(?m)^dir\d+=[ \t]*\n', '', filedata) # remove empty 'dirN=' entries for cloud_save
         
         # Remove commented FORMAT EXAMPLES section if actual cloud save sections were generated
+        # 'ufs' (User File Storage) contains cloud save directory configuration from Steam
         if not SKIP_CLOUD_DIRS and ("ufs" in game_info):
-            # Remove the entire commented FORMAT EXAMPLES block to avoid confusion
+            # Remove the entire commented FORMAT EXAMPLES block to avoid confusion with generated sections
+            # Matches from "# === FORMAT EXAMPLES" header through all commented cloud_save sections
             filedata = re.sub(
-                r'# === FORMAT EXAMPLES.*?#\[app::cloud_save::linux\]\n(?:#dir\d+=.*?\n)*',
+                r'# === FORMAT EXAMPLES.*?'  # Header line and explanation
+                r'#\[app::cloud_save::linux\]\n'  # End at linux section header
+                r'(?:#dir\d+=.*?\n)*',  # Followed by commented dir entries
                 '',
                 filedata,
                 flags=re.DOTALL
