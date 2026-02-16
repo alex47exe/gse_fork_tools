@@ -1677,7 +1677,14 @@ def main():
                         lines_cfg_app = [
                             "[app::cloud_save::win]\n",
                             "dir1=\n",
-                            "dir2=\n"
+                            "dir2=\n",
+                            "dir3=\n",
+                            "dir4=\n",
+                            "dir5=\n",
+                            "dir6=\n",
+                            "dir7=\n",
+                            "dir8=\n",
+                            "dir9=\n"
                         ]
                         with open(os.path.join(emu_settings_dir, "configs.app.ini"), "a", encoding="utf-8") as f:
                             f.writelines(lines_cfg_app)
@@ -1695,7 +1702,14 @@ def main():
                         lines_cfg_app = [
                             "[app::cloud_save::linux]\n",
                             "dir1=\n",
-                            "dir2=\n"
+                            "dir2=\n",
+                            "dir3=\n",
+                            "dir4=\n",
+                            "dir5=\n",
+                            "dir6=\n",
+                            "dir7=\n",
+                            "dir8=\n",
+                            "dir9=\n"
                         ]
                         with open(os.path.join(emu_settings_dir, "configs.app.ini"), "a", encoding="utf-8") as f:
                             f.writelines(lines_cfg_app)
@@ -1715,8 +1729,15 @@ def main():
             filedata = file.read()
         filedata = filedata.replace(' = ""', '=')
         filedata = filedata.replace(' = ', '=')
-        filedata = filedata.replace('dir2=', '') # remove empty 'dir2=' entry for cloud_save
-        filedata = filedata.replace('#{::', '#dir2={::') # add back '#dir2=' to the format examples
+        filedata = filedata.replace(r'dir2=\n', '') # remove empty 'dir2=' entry for cloud_save
+        filedata = filedata.replace(r'dir3=\n', '') # ...
+        filedata = filedata.replace(r'dir4=\n', '') # ...
+        filedata = filedata.replace(r'dir5=\n', '') # ...
+        filedata = filedata.replace(r'dir6=\n', '') # ...
+        filedata = filedata.replace(r'dir7=\n', '') # ...
+        filedata = filedata.replace(r'dir8=\n', '') # ...
+        filedata = filedata.replace(r'dir9=\n', '') # ...
+        #filedata = filedata.replace('#{::', '#dir2={::') # add back '#dir2=' to the format examples - not needed anymore, as only empty dir2= will be replaced
         with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
             file.write(filedata)
     
