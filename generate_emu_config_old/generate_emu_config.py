@@ -1715,8 +1715,7 @@ def main():
             filedata = file.read()
         filedata = filedata.replace(' = ""', '=')
         filedata = filedata.replace(' = ', '=')
-        filedata = re.sub(r'dir2=[ \t]*\n', '', filedata) # remove empty 'dir2=' entry for cloud_save
-        filedata = filedata.replace('#{::', '#dir2={::') # add back '#dir2=' to the format examples
+        filedata = re.sub(r'dir\d+=[ \t]*\n', '', filedata) # remove empty 'dirN=' entries for cloud_save
         with open(os.path.join(emu_settings_dir, "configs.app.ini"), 'w', encoding="utf-8") as file:
             file.write(filedata)
     
